@@ -30,8 +30,8 @@ export const normalizeData = (data) => {
   });
 };
 
-export const getNormalizedGameDataById = async (url, id) => {
-  const data = await getData(`${url}/${id}`);
+export const getNormalizedGameDataById = async (url, link) => {
+  const data = await getData(`${link}`);
   return isResponseOk(data) ? normalizeDataObject(data) : data;
 };
 

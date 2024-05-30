@@ -24,7 +24,7 @@ export default function GamePage(props) {
       setPreloaderVisible(true);
       const game = await getNormalizedGameDataById(
         endpoints.games,
-        props.params.link
+        props.params.id
       );
       isResponseOk(game) ? setGame(game) : setGame(null);
       setPreloaderVisible(false);
@@ -45,7 +45,11 @@ export default function GamePage(props) {
       ? game.users.map((user) => user.id)
       : [];
     usersIdArray.push(authContext.user.id); // Данные о пользователе получаем из контекста
-    const response = await vote(`${game.link}`, jwt, usersIdArray);
+    const response = await vote(
+      `${endpoints.games}/${game.id}`,
+      jwt,
+      usersIdArray
+    );
     if (isResponseOk(response)) {
       setGame(() => {
         return {
