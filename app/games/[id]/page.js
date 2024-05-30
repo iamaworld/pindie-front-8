@@ -22,10 +22,7 @@ export default function GamePage(props) {
   useEffect(() => {
     async function fetchData() {
       setPreloaderVisible(true);
-      const game = await getNormalizedGameDataById(
-        endpoints.games,
-        props.params.id
-      );
+      const game = await getNormalizedGameDataById(props.params.link);
       isResponseOk(game) ? setGame(game) : setGame(null);
       setPreloaderVisible(false);
     }
