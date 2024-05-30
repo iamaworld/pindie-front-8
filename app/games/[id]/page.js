@@ -16,11 +16,12 @@ import Styles from "./Game.module.css";
 export default function GamePage(props) {
   const [game, setGame] = useState(null);
   const [preloaderVisible, setPreloaderVisible] = useState(true);
+
   const [isVoted, setIsVoted] = useState(false);
   const authContext = useStore();
-
   useEffect(() => {
     async function fetchData() {
+      setPreloaderVisible(true);
       const game = await getNormalizedGameDataById(
         endpoints.games,
         props.params.id
@@ -30,17 +31,20 @@ export default function GamePage(props) {
     }
     fetchData();
   }, []);
-  
+
   useEffect(() => {
-    authContext.user && game ? setIsVoted(checkIfUserVoted(game, authContext.user.id)) : setIsVoted(false);
+    // Данные о пользователе получаем из контекста authContext.user
+    authContext.user && game
+      ? setIsVoted(checkIfUsersVoted(game, authContext.user.id))
+      : setIsVoted(false);
   }, [authContext.user, game]);
 
   const handleVote = async () => {
-    const jwt = authContext.token
+    const jwt = authContext.token; // Данные о токене получаем из контекста
     let usersIdArray = game.users.length
       ? game.users.map((user) => user.id)
       : [];
-    usersIdArray.push(authContext.user.id);
+    usersIdArray.push(authContext.user.id); // Данные о пользователе получаем из контекста
     const response = await vote(
       `${endpoints.games}/${game.id}`,
       jwt,
@@ -50,6 +54,7 @@ export default function GamePage(props) {
       setGame(() => {
         return {
           ...game,
+          // Данные о пользователе получаем из контекста
           users: [...game.users, authContext.user],
         };
       });
@@ -84,6 +89,7 @@ export default function GamePage(props) {
                   {game.users.length}
                 </span>
               </p>
+
               <button
                 disabled={!authContext.isAuth || isVoted}
                 className={`button ${Styles["about__vote-button"]}`}
